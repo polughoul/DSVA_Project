@@ -1,0 +1,299 @@
+2025-12-25 17:57:35,791 [Node node-1] Node starting...
+2025-12-25 18:07:49,325 [Node node-1] Node starting...
+2025-12-25 18:08:18,880 [Node node-1] Node starting...
+2025-12-25 18:20:45,412 [Node node-1] Node starting...
+2025-12-25 18:20:45,412 [Node node-1] Node starting...
+2025-12-25 18:21:37,522 [Node node-1] Node killed
+2025-12-25 18:21:37,522 [Node node-1] Node killed
+2025-12-25 18:23:35,693 [Node node-1] Node revived
+2025-12-25 18:23:35,693 [Node node-1] Node revived
+2025-12-25 18:24:15,053 [Node node-1] Delay was set
+2025-12-25 18:24:15,053 [Node node-1] Delay was set
+2025-12-25 18:28:00,580 [Node node-1] Node killed
+2025-12-25 18:28:00,580 [Node node-1] Node killed
+2025-12-25 18:29:06,932 [Node node-1] Node revived
+2025-12-25 18:29:06,932 [Node node-1] Node revived
+2025-12-25 18:35:05,112 [Node node-1] Node starting...
+2025-12-25 18:35:05,112 [Node node-1] Node starting...
+2025-12-25 18:35:28,343 [Node node-1] Delay was set
+2025-12-25 18:35:28,343 [Node node-1] Delay was set
+2025-12-25 18:35:41,623 [Node node-1] Node killed
+2025-12-25 18:35:41,623 [Node node-1] Node killed
+2025-12-25 20:10:00,361 [Node node-1] Node starting...
+2025-12-25 20:10:00,361 [Node node-1] Node starting...
+2025-12-25 20:16:50,897 [Node node-1] Node starting...
+2025-12-25 20:16:50,897 [Node node-1] Node starting...
+2025-12-25 20:24:51,446 [Node node-1] Node starting...
+2025-12-25 20:24:51,446 [Node node-1] Node starting...
+2025-12-25 21:03:37,596 [Node node-1] Join request from node 2
+2025-12-25 21:03:37,596 [Node node-1] Join request from node 2
+2025-12-25 21:03:37,597 [Node node-1] Created 2-node ring
+2025-12-25 21:03:37,597 [Node node-1] Created 2-node ring
+2025-12-25 21:22:01,457 [Node node-1] Node starting...
+2025-12-25 21:22:01,457 [Node node-1] Node starting...
+2025-12-25 21:23:30,653 [Node node-1] Join request from node 2
+2025-12-25 21:23:30,653 [Node node-1] Join request from node 2
+2025-12-25 21:23:30,673 [Node node-1] Created 2-node ring
+2025-12-25 21:23:30,673 [Node node-1] Created 2-node ring
+2025-12-25 21:34:07,681 [Node node-1] Leaving ring
+2025-12-25 21:34:07,681 [Node node-1] Leaving ring
+2025-12-25 21:35:00,036 [Node node-1] Join request from node 2
+2025-12-25 21:35:00,036 [Node node-1] Join request from node 2
+2025-12-25 21:35:00,041 [Node node-1] Created 2-node ring
+2025-12-25 21:35:00,041 [Node node-1] Created 2-node ring
+2025-12-25 21:38:54,743 [Node node-1] Leaving ring
+2025-12-25 21:38:54,743 [Node node-1] Leaving ring
+2025-12-25 21:50:52,712 [Node node-1] Node starting...
+2025-12-25 21:50:52,712 [Node node-1] Node starting...
+2025-12-25 21:54:48,238 [Node node-1] Join request from node 2
+2025-12-25 21:54:48,238 [Node node-1] Join request from node 2
+2025-12-25 21:54:48,247 [Node node-1] Created 2-node ring
+2025-12-25 21:54:48,247 [Node node-1] Created 2-node ring
+2025-12-25 22:00:12,675 [Node node-1] Leaving ring
+2025-12-25 22:00:12,675 [Node node-1] Leaving ring
+2025-12-25 22:04:43,698 [Node node-1] Node starting...
+2025-12-25 22:04:43,698 [Node node-1] Node starting...
+2025-12-25 22:05:24,926 [Node node-1] Join request from node 2
+2025-12-25 22:05:24,926 [Node node-1] Join request from node 2
+2025-12-25 22:05:24,935 [Node node-1] Created 2-node ring
+2025-12-25 22:05:24,935 [Node node-1] Created 2-node ring
+2025-12-25 22:19:50,450 [Node node-1] Node starting...
+2025-12-25 22:19:50,450 [Node node-1] Node starting...
+2025-12-25 22:47:35,938 [Node node-1] Node starting...
+2025-12-25 22:47:35,938 [Node node-1] Node starting...
+2025-12-25 22:49:45,347 [Node node-1] Node starting...
+2025-12-25 22:49:45,347 [Node node-1] Node starting...
+2025-12-25 22:59:39,699 [Node node-1] Node starting...
+2025-12-25 22:59:39,699 [Node node-1] Node starting...
+2025-12-25 23:12:53,819 [Node node-1] Node starting...
+2025-12-25 23:12:53,819 [Node node-1] Node starting...
+2025-12-25 23:14:02,127 [Node node-1] Election message received: 3
+2025-12-25 23:14:02,127 [Node node-1] Election message received: 3
+2025-12-25 23:14:02,150 [Node node-1] Leader announced: 3
+2025-12-25 23:14:02,150 [Node node-1] Leader announced: 3
+2025-12-25 23:33:24,856 [Node node-1] Node starting...
+2025-12-25 23:33:24,856 [Node node-1] Node starting...
+2025-12-25 23:36:02,512 [Node node-1] Election message received: 3
+2025-12-25 23:36:02,512 [Node node-1] Election message received: 3
+2025-12-25 23:36:02,521 [Node node-1] Leader announced: 3
+2025-12-25 23:36:02,521 [Node node-1] Leader announced: 3
+2025-12-26 17:46:16,769 [Node node-1] Node starting...
+2025-12-26 17:46:16,769 [Node node-1] Node starting...
+2025-12-26 17:48:58,862 [Node node-1] Starting election
+2025-12-26 17:48:58,862 [Node node-1] Starting election
+2025-12-26 17:48:58,875 [Node node-1] Election message received: 3
+2025-12-26 17:48:58,875 [Node node-1] Election message received: 3
+2025-12-26 17:48:58,885 [Node node-1] Leader announced: 3
+2025-12-26 17:48:58,885 [Node node-1] Leader announced: 3
+2025-12-26 18:02:27,572 [Node node-1] Node starting...
+2025-12-26 18:02:27,572 [Node node-1] Node starting...
+2025-12-26 18:03:53,629 [Node node-1] Starting election
+2025-12-26 18:03:53,629 [Node node-1] Starting election
+2025-12-26 18:03:53,649 [Node node-1] Election message received: 3
+2025-12-26 18:03:53,649 [Node node-1] Election message received: 3
+2025-12-26 18:03:53,663 [Node node-1] Leader announced: 3
+2025-12-26 18:03:53,663 [Node node-1] Leader announced: 3
+2025-12-26 19:29:39,300 [Node node-1] Node starting...
+2025-12-26 19:29:39,300 [Node node-1] Node starting...
+2025-12-26 19:39:08,215 [Node node-1] Starting election
+2025-12-26 19:39:08,215 [Node node-1] Starting election
+2025-12-26 19:39:08,237 [Node node-1] Election message received: 3
+2025-12-26 19:39:08,237 [Node node-1] Election message received: 3
+2025-12-26 19:39:08,252 [Node node-1] Leader announced: 3
+2025-12-26 19:39:08,252 [Node node-1] Leader announced: 3
+2025-12-26 20:08:12,610 [Node node-1] Node starting...
+2025-12-26 20:08:12,610 [Node node-1] Node starting...
+2025-12-26 20:11:03,683 [Node node-1] Starting election
+2025-12-26 20:11:03,683 [Node node-1] Starting election
+2025-12-26 20:11:03,701 [Node node-1] Election message received: 3
+2025-12-26 20:11:03,701 [Node node-1] Election message received: 3
+2025-12-26 20:11:03,713 [Node node-1] Leader announced: 3
+2025-12-26 20:11:03,713 [Node node-1] Leader announced: 3
+2025-12-26 20:11:32,682 [Node node-1] Election message received: 2
+2025-12-26 20:11:32,682 [Node node-1] Election message received: 2
+2025-12-26 20:27:52,096 [Node node-1] Node starting...
+2025-12-26 20:27:52,096 [Node node-1] Node starting...
+2025-12-26 20:32:47,039 [Node node-1] Node starting...
+2025-12-26 20:32:47,039 [Node node-1] Node starting...
+2025-12-26 20:33:38,874 [Node node-1] Starting election
+2025-12-26 20:33:38,874 [Node node-1] Starting election
+2025-12-26 20:33:38,932 [Node node-1] Election message received: 3
+2025-12-26 20:33:38,932 [Node node-1] Election message received: 3
+2025-12-26 20:33:38,948 [Node node-1] Leader announced: 3
+2025-12-26 20:33:38,948 [Node node-1] Leader announced: 3
+2025-12-26 20:34:04,704 [Node node-1] Election message received: 2
+2025-12-26 20:34:04,704 [Node node-1] Election message received: 2
+2025-12-26 20:57:26,547 [Node node-1] Node starting...
+2025-12-26 20:57:26,547 [Node node-1] Node starting...
+2025-12-26 20:58:42,731 [Node node-1] Starting election
+2025-12-26 20:58:42,731 [Node node-1] Starting election
+2025-12-26 20:58:42,749 [Node node-1] Election message received: 3
+2025-12-26 20:58:42,749 [Node node-1] Election message received: 3
+2025-12-26 20:58:42,773 [Node node-1] Leader set to 3
+2025-12-26 20:58:42,773 [Node node-1] Leader set to 3
+2025-12-26 20:59:02,986 [Node node-1] Election message received: 2
+2025-12-26 20:59:02,986 [Node node-1] Election message received: 2
+2025-12-26 20:59:03,003 [Node node-1] Leader set to 2
+2025-12-26 20:59:03,003 [Node node-1] Leader set to 2
+2026-01-03 21:01:59,000 [Node node-1] Node starting...
+2026-01-03 21:01:59,000 [Node node-1] Node starting...
+2026-01-03 21:12:37,750 [Node node-1] Starting election
+2026-01-03 21:12:37,750 [Node node-1] Starting election
+2026-01-03 21:12:37,782 [Node node-1] Leader set to 3
+2026-01-03 21:12:37,782 [Node node-1] Leader set to 3
+2026-01-03 21:25:40,640 [Node node-1] Delay set to 1.5
+2026-01-03 21:25:40,640 [Node node-1] Delay set to 1.5
+2026-01-03 21:32:21,952 [Node node-1] Leader set to 2
+2026-01-03 21:32:21,952 [Node node-1] Leader set to 2
+2026-01-03 21:40:47,524 [Node node-1] Leaving ring
+2026-01-03 21:40:47,524 [Node node-1] Leaving ring
+2026-01-03 22:08:16,103 [Node node-1] Node starting...
+2026-01-03 22:08:16,103 [Node node-1] Node starting...
+2026-01-03 22:09:49,559 [Node node-1] Delay set to 1.5
+2026-01-03 22:09:49,559 [Node node-1] Delay set to 1.5
+2026-01-03 22:10:31,939 [Node node-1] Starting election
+2026-01-03 22:10:31,939 [Node node-1] Starting election
+2026-01-03 22:10:40,998 [Node node-1] Leader set to 3
+2026-01-03 22:10:40,998 [Node node-1] Leader set to 3
+2026-01-03 22:13:49,950 [Node node-1] Starting election
+2026-01-03 22:13:49,950 [Node node-1] Starting election
+2026-01-03 22:15:29,218 [Node node-1] Leader set to 2
+2026-01-03 22:15:29,218 [Node node-1] Leader set to 2
+2026-01-03 22:17:09,082 [Node node-1] Starting election
+2026-01-03 22:17:09,082 [Node node-1] Starting election
+2026-01-03 22:17:18,109 [Node node-1] Leader set to 3
+2026-01-03 22:17:18,109 [Node node-1] Leader set to 3
+2026-01-04 16:08:52,336 [Node node-1] Node starting...
+2026-01-04 16:08:52,336 [Node node-1] Node starting...
+2026-01-04 16:31:03,371 [Node node-1] Starting election
+2026-01-04 16:31:03,371 [Node node-1] Starting election
+2026-01-04 16:31:07,377 [Node node-1] Message delivery failed (node unreachable)
+2026-01-04 16:31:07,377 [Node node-1] Message delivery failed (node unreachable)
+2026-01-04 18:23:39,710 [Node node-1] Node starting...
+2026-01-04 18:23:39,710 [Node node-1] Node starting...
+2026-01-04 18:23:57,952 [Node node-1] Join request from node 2
+2026-01-04 18:23:57,952 [Node node-1] Join request from node 2
+2026-01-04 18:24:00,538 [Node node-1] Neighbors updated: prev=3, next=2
+2026-01-04 18:24:00,538 [Node node-1] Neighbors updated: prev=3, next=2
+2026-01-04 18:24:22,556 [Node node-1] Starting election
+2026-01-04 18:24:22,556 [Node node-1] Starting election
+2026-01-04 18:24:22,578 [Node node-1] Election message received: 3
+2026-01-04 18:24:22,578 [Node node-1] Election message received: 3
+2026-01-04 18:24:22,601 [Node node-1] Leader set to 3
+2026-01-04 18:24:22,601 [Node node-1] Leader set to 3
+2026-01-04 18:25:56,153 [Node node-1] Delay set to 1.0
+2026-01-04 18:25:56,153 [Node node-1] Delay set to 1.0
+2026-01-04 18:26:13,141 [Node node-1] Starting election
+2026-01-04 18:26:13,141 [Node node-1] Starting election
+2026-01-04 18:26:16,144 [Node node-1] Election start failed
+2026-01-04 18:26:16,144 [Node node-1] Election start failed
+2026-01-04 18:26:19,161 [Node node-1] Election message received: 3
+2026-01-04 18:26:19,161 [Node node-1] Election message received: 3
+2026-01-04 18:26:22,173 [Node node-1] Election forwarding failed
+2026-01-04 18:26:22,173 [Node node-1] Election forwarding failed
+2026-01-04 18:26:25,187 [Node node-1] Leader set to 3
+2026-01-04 18:26:25,187 [Node node-1] Leader set to 3
+2026-01-04 18:29:15,166 [Node node-1] Leader unreachable, starting election
+2026-01-04 18:29:15,166 [Node node-1] Leader unreachable, starting election
+2026-01-04 18:29:15,171 [Node node-1] Starting election
+2026-01-04 18:29:15,171 [Node node-1] Starting election
+2026-01-04 18:29:18,177 [Node node-1] Election start failed
+2026-01-04 18:29:18,177 [Node node-1] Election start failed
+2026-01-04 18:29:21,336 [Node node-1] Election message received: 3
+2026-01-04 18:29:21,336 [Node node-1] Election message received: 3
+2026-01-04 18:29:24,349 [Node node-1] Election forwarding failed
+2026-01-04 18:29:24,349 [Node node-1] Election forwarding failed
+2026-01-04 18:29:27,366 [Node node-1] Leader set to 3
+2026-01-04 18:29:27,366 [Node node-1] Leader set to 3
+2026-01-04 18:29:34,416 [Node node-1] Leader unreachable, starting election
+2026-01-04 18:29:34,416 [Node node-1] Leader unreachable, starting election
+2026-01-04 18:29:34,428 [Node node-1] Starting election
+2026-01-04 18:29:34,428 [Node node-1] Starting election
+2026-01-04 18:29:37,438 [Node node-1] Election start failed
+2026-01-04 18:29:37,438 [Node node-1] Election start failed
+2026-01-04 18:29:40,452 [Node node-1] Election message received: 3
+2026-01-04 18:29:40,452 [Node node-1] Election message received: 3
+2026-01-04 18:29:43,483 [Node node-1] Election forwarding failed
+2026-01-04 18:29:43,483 [Node node-1] Election forwarding failed
+2026-01-04 18:29:46,486 [Node node-1] Leader set to 3
+2026-01-04 18:29:46,486 [Node node-1] Leader set to 3
+2026-01-04 18:36:02,565 [Node node-1] Delay set to 0.0
+2026-01-04 18:36:02,565 [Node node-1] Delay set to 0.0
+2026-01-04 18:37:25,124 [Node node-1] Starting election
+2026-01-04 18:37:25,124 [Node node-1] Starting election
+2026-01-04 18:37:25,144 [Node node-1] Election message received: 3
+2026-01-04 18:37:25,144 [Node node-1] Election message received: 3
+2026-01-04 18:37:25,163 [Node node-1] Leader set to 3
+2026-01-04 18:37:25,163 [Node node-1] Leader set to 3
+2026-01-04 18:48:04,964 [Node node-1] Node starting...
+2026-01-04 18:48:04,964 [Node node-1] Node starting...
+2026-01-04 18:48:36,917 [Node node-1] Join request from node 2
+2026-01-04 18:48:36,917 [Node node-1] Join request from node 2
+2026-01-04 18:48:56,274 [Node node-1] Neighbors updated: prev=3, next=2
+2026-01-04 18:48:56,274 [Node node-1] Neighbors updated: prev=3, next=2
+2026-01-04 18:49:03,833 [Node node-1] Starting election
+2026-01-04 18:49:03,833 [Node node-1] Starting election
+2026-01-04 18:49:03,856 [Node node-1] Election message received: 3
+2026-01-04 18:49:03,856 [Node node-1] Election message received: 3
+2026-01-04 18:49:03,881 [Node node-1] Leader set to 3
+2026-01-04 18:49:03,881 [Node node-1] Leader set to 3
+2026-01-04 18:49:11,601 [Node node-1] Election message received: 3
+2026-01-04 18:49:11,601 [Node node-1] Election message received: 3
+2026-01-04 18:49:11,628 [Node node-1] Leader set to 3
+2026-01-04 18:49:11,628 [Node node-1] Leader set to 3
+2026-01-04 18:49:16,059 [Node node-1] Election message received: 3
+2026-01-04 18:49:16,059 [Node node-1] Election message received: 3
+2026-01-04 18:49:16,091 [Node node-1] Leader set to 3
+2026-01-04 18:49:16,091 [Node node-1] Leader set to 3
+2026-01-04 18:49:46,719 [Node node-1] Election message received: 2
+2026-01-04 18:49:46,719 [Node node-1] Election message received: 2
+2026-01-04 18:49:46,739 [Node node-1] Leader set to 2
+2026-01-04 18:49:46,739 [Node node-1] Leader set to 2
+2026-01-04 18:51:45,509 [Node node-1] Election message received: 3
+2026-01-04 18:51:45,509 [Node node-1] Election message received: 3
+2026-01-04 18:51:45,537 [Node node-1] Leader set to 3
+2026-01-04 18:51:45,537 [Node node-1] Leader set to 3
+2026-01-04 18:56:56,886 [Node node-1] Node starting...
+2026-01-04 18:56:56,886 [Node node-1] Node starting...
+2026-01-04 18:57:25,285 [Node node-1] Join request from node 2
+2026-01-04 18:57:25,285 [Node node-1] Join request from node 2
+2026-01-04 18:57:32,083 [Node node-1] Neighbors updated: prev=3, next=2
+2026-01-04 18:57:32,083 [Node node-1] Neighbors updated: prev=3, next=2
+2026-01-04 18:57:37,831 [Node node-1] Election message received: 3
+2026-01-04 18:57:37,831 [Node node-1] Election message received: 3
+2026-01-04 18:57:37,864 [Node node-1] Leader set to 3
+2026-01-04 18:57:37,864 [Node node-1] Leader set to 3
+2026-01-04 18:57:59,374 [Node node-1] Election message received: 2
+2026-01-04 18:57:59,374 [Node node-1] Election message received: 2
+2026-01-04 18:57:59,395 [Node node-1] Leader set to 2
+2026-01-04 18:57:59,395 [Node node-1] Leader set to 2
+2026-01-04 19:13:57,357 [Node node-1] Node starting...
+2026-01-04 19:13:57,357 [Node node-1] Node starting...
+2026-01-04 19:14:42,924 [Node node-1] Delay set to 0.5
+2026-01-04 19:14:42,924 [Node node-1] Delay set to 0.5
+2026-01-04 19:15:40,226 [Node node-1] Join request from node 2
+2026-01-04 19:15:40,226 [Node node-1] Join request from node 2
+2026-01-04 19:15:46,840 [Node node-1] Neighbors updated: prev=3, next=2
+2026-01-04 19:15:46,840 [Node node-1] Neighbors updated: prev=3, next=2
+2026-01-04 19:17:17,451 [Node node-1] Starting election
+2026-01-04 19:17:17,451 [Node node-1] Starting election
+2026-01-04 19:17:19,960 [Node node-1] Election start failed
+2026-01-04 19:17:19,960 [Node node-1] Election start failed
+2026-01-04 19:17:20,478 [Node node-1] Election message received: 3
+2026-01-04 19:17:20,478 [Node node-1] Election message received: 3
+2026-01-04 19:17:21,849 [Node node-1] Election message received: 3
+2026-01-04 19:17:21,849 [Node node-1] Election message received: 3
+2026-01-04 19:17:22,414 [Node node-1] Election message received: 3
+2026-01-04 19:17:22,414 [Node node-1] Election message received: 3
+2026-01-04 19:17:23,007 [Node node-1] Election forwarding failed
+2026-01-04 19:17:23,007 [Node node-1] Election forwarding failed
+2026-01-04 19:17:23,510 [Node node-1] Leader set to 3
+2026-01-04 19:17:23,510 [Node node-1] Leader set to 3
+2026-01-04 19:17:24,368 [Node node-1] Election forwarding failed
+2026-01-04 19:17:24,368 [Node node-1] Election forwarding failed
+2026-01-04 19:17:24,887 [Node node-1] Leader set to 3
+2026-01-04 19:17:24,887 [Node node-1] Leader set to 3
+2026-01-04 19:17:24,932 [Node node-1] Election forwarding failed
+2026-01-04 19:17:24,932 [Node node-1] Election forwarding failed
+2026-01-04 19:17:25,449 [Node node-1] Leader set to 3
+2026-01-04 19:17:25,449 [Node node-1] Leader set to 3
