@@ -175,14 +175,20 @@ def handle_get_var():
     state = global_state.state
 
     if not state.alive:
+        logger.info("Socket GET_VAR rejected - node killed")
         return {"error": "NODE_KILLED"}
 
     if state.leader_id != state.node_id:
+        logger.info(
+            "Socket GET_VAR redirected - not leader (leader=%s)",
+            state.leader_id
+        )
         return {
             "error": "NOT_LEADER",
             "leader_id": state.leader_id
         }
 
+    logger.info("Socket GET_VAR served by leader - value=%s", state.shared_value)
     return {
         "value": state.shared_value,
         "leader_id": state.node_id
@@ -194,9 +200,14 @@ def handle_set_var(msg):
     state = global_state.state
 
     if not state.alive:
+        logger.info("Socket SET_VAR rejected - node killed")
         return {"error": "NODE_KILLED"}
 
     if state.leader_id != state.node_id:
+        logger.info(
+            "Socket SET_VAR redirected - not leader (leader=%s)",
+            state.leader_id
+        )
         return {
             "error": "NOT_LEADER",
             "leader_id": state.leader_id

@@ -414,17 +414,27 @@ def get_variable():
     state = global_state.state
 
     if not state.alive:
+        logger.info("GET /variable rejected - node killed")
         raise HTTPException(status_code=503, detail="Node is killed")
 
     if state.leader_node is None:
+        logger.info("GET /variable rejected - no leader elected")
         return {"error": "No leader elected"}
 
     if state.leader_id == state.node_id:
+        logger.info(
+            "GET /variable served locally - value=%s",
+            state.shared_value
+        )
         return {
             "value": state.shared_value,
             "served_by": state.node_id
         }
 
+    logger.info(
+        "GET /variable forwarding to leader %s",
+        state.leader_id
+    )
     response = send_socket_message(
         *state.leader_node.socket_addr(),
         {"type": "GET_VAR"}
@@ -450,19 +460,30 @@ def set_variable(value: int = Body(..., embed=True)):
     state = global_state.state
 
     if not state.alive:
+        logger.info("POST /variable rejected - node killed")
         raise HTTPException(status_code=503, detail="Node is killed")
 
     if state.leader_node is None:
+        logger.info("POST /variable rejected - no leader elected")
         return {"error": "No leader elected"}
 
     if state.leader_id == state.node_id:
         state.shared_value = value
+        logger.info(
+            "POST /variable applied locally - value=%s",
+            value
+        )
         return {
             "status": "OK",
             "value": value,
             "set_by": state.node_id
         }
 
+    logger.info(
+        "POST /variable forwarding value=%s to leader %s",
+        value,
+        state.leader_id
+    )
     response = send_socket_message(
         *state.leader_node.socket_addr(),
         {
@@ -482,6 +503,10 @@ def set_variable(value: int = Body(..., embed=True)):
         if error_code in {"NODE_KILLED", "NOT_LEADER"}:
             _raise_with_election(503, "Leader unavailable", f"Leader responded with {error_code} during SET_VAR")
 
+    logger.info(
+        "POST /variable acknowledged by leader %s",
+        state.leader_id
+    )
     return response
 
 
