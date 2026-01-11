@@ -1,5 +1,2 @@
-# Local configuration files
-app/config.py
-
-# Local run script
-run.sh
+# Local configuration overrides
+app/config.local.py

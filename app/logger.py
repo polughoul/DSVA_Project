@@ -1,6 +1,7 @@
 import logging
-import os
 from logging.handlers import SocketHandler
+
+from app.config import LOG_AGGREGATOR_HOST, LOG_AGGREGATOR_PORT
 
 def setup_logger(node_id: int):
     logger = logging.getLogger(f"node-{node_id}")
@@ -22,21 +23,18 @@ def setup_logger(node_id: int):
 
     logger.addHandler(ch)
     logger.addHandler(fh)
-    aggregator_host = os.getenv("LOG_AGGREGATOR_HOST")
-    aggregator_port = os.getenv("LOG_AGGREGATOR_PORT")
-
-    if aggregator_host and aggregator_port:
+    if LOG_AGGREGATOR_HOST and LOG_AGGREGATOR_PORT:
         try:
             socket_handler = SocketHandler(
-                aggregator_host,
-                int(aggregator_port)
+                LOG_AGGREGATOR_HOST,
+                LOG_AGGREGATOR_PORT
             )
             logger.addHandler(socket_handler)
         except (ValueError, OSError):
             logger.warning(
                 "Failed to attach aggregator handler (%s:%s)",
-                aggregator_host,
-                aggregator_port
+                LOG_AGGREGATOR_HOST,
+                LOG_AGGREGATOR_PORT
             )
     logger.propagate = False
 
