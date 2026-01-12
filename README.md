@@ -70,6 +70,14 @@ Pro heterogenní prostředí lze zadat konkrétní adresy:
 ```bash
 export NODE1_HOST=http://192.168.56.103:8000
 export NODE2_HOST=http://192.168.56.104:8000
+export NODE3_HOST=http://192.168.56.105:8000
+export NODE4_HOST=http://192.168.56.106:8000
+export NODE5_HOST=http://192.168.56.107:8000
+
+export NODE1_SOCKET_PORT=9001
+export NODE2_SOCKET_PORT=9002
+export NODE3_SOCKET_PORT=9003
+export NODE4_SOCKET_PORT=9004
 export NODE5_SOCKET_PORT=9005
 ```
 
