@@ -226,6 +226,13 @@ def leave():
 @router.get("/health")
 def health():
     state = global_state.state
+    logger.info(
+        "Health snapshot: status=%s leader=%s prev=%s next=%s",
+        "alive" if state.alive else "killed",
+        state.leader_id,
+        state.prev_node.node_id if state.prev_node else None,
+        state.next_node.node_id if state.next_node else None,
+    )
     return {
         "status": "alive" if state.alive else "killed",
         "node_id": state.node_id,
