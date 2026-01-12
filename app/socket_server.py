@@ -8,13 +8,39 @@ from app.socket_client import send_socket_message
 logger = setup_logger("socket-server")
 
 
+def describe_message(msg: dict) -> str:
+    msg_type = msg.get("type", "UNKNOWN")
+
+    if msg_type == "ELECTION":
+        candidate = msg.get("candidate_id")
+        return f"ELECTION candidate={candidate}"
+
+    if msg_type == "LEADER":
+        leader_id = msg.get("leader_id")
+        return f"LEADER leader={leader_id}"
+
+    if msg_type == "GET_VAR":
+        return "GET_VAR request"
+
+    if msg_type == "SET_VAR":
+        value = msg.get("value")
+        return f"SET_VAR value={value}"
+
+    if msg_type == "PING":
+        return "PING"
+
+    return msg_type
+
+
 def start_socket_server(host: str, port: int):
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     server.bind((host, port))
     server.listen()
 
-    logger.info(f"node={global_state.state.node_id if global_state.state else '?'} server listening on {host}:{port}")
+    logger.info(
+        f"node={global_state.state.node_id if global_state.state else '?'}: server listening on {host}:{port}"
+    )
 
     while True:
         conn, addr = server.accept()
@@ -33,13 +59,12 @@ def handle_client(conn: socket.socket, addr):
             return
 
         message = json.loads(data)
+        summary = describe_message(message)
         logger.info(
-            "node=%s incoming message type=%s from host=%s remote_port=%s payload=%s",
+            "node=%s: received %s from %s",
             state.node_id,
-            message.get("type"),
-            addr[0],
-            addr[1],
-            message
+            summary,
+            addr[0]
         )
 
         response = handle_message(message)
@@ -48,10 +73,9 @@ def handle_client(conn: socket.socket, addr):
 
     except Exception as e:
         logger.warning(
-            "node=%s socket error from host=%s remote_port=%s error=%s",
+            "node=%s: socket error from host=%s error=%s",
             state.node_id,
             addr[0],
-            addr[1],
             e
         )
 
@@ -85,7 +109,7 @@ def _forward_election(candidate_id: int):
     state = global_state.state
 
     if not state.next_node:
-        logger.warning("node=%s no next node to forward election message", state.node_id)
+        logger.warning("node=%s: no next node to forward election message", state.node_id)
         return {"error": "NO_NEXT_NODE"}
 
     ip, port = state.next_node.socket_addr()
@@ -100,7 +124,7 @@ def _forward_election(candidate_id: int):
     )
 
     if isinstance(response, dict) and response.get("error") == "SOCKET_COMM_ERROR":
-        logger.warning("node=%s election forward error", state.node_id)
+        logger.warning("node=%s: election forward error", state.node_id)
         return {"error": "SOCKET_COMM_ERROR"}
 
     return {"status": "FORWARDED"}
@@ -109,10 +133,8 @@ def handle_election(msg: dict):
     state = global_state.state
     candidate_id = msg["candidate_id"]
 
-    logger.info("node=%s election received candidate_id=%s", state.node_id, candidate_id)
-
     if not state.alive:
-        logger.info("node=%s forwarding election while killed", state.node_id)
+        logger.info("node=%s: forwarding election while killed", state.node_id)
         return _forward_election(candidate_id)
 
     if candidate_id > state.node_id:
@@ -124,7 +146,7 @@ def handle_election(msg: dict):
         state.leader_node = state.self_info()
         state.in_election = False
 
-        logger.info("node=%s elected self as leader", state.node_id)
+        logger.info("node=%s: elected self as leader", state.node_id)
 
         if not state.next_node:
             return {"status": "LEADER"}
@@ -143,7 +165,7 @@ def handle_election(msg: dict):
         )
 
         if isinstance(response, dict) and response.get("error") == "SOCKET_COMM_ERROR":
-            logger.warning("node=%s leader broadcast failed", state.node_id)
+            logger.warning("node=%s: leader broadcast failed", state.node_id)
 
         return {"status": "LEADER"}
 
@@ -153,7 +175,7 @@ def handle_leader(msg: dict):
     state = global_state.state
 
     if not state.alive:
-        logger.info("node=%s ignored leader notice (node killed)", state.node_id)
+        logger.info("node=%s: ignored leader notice (node killed)", state.node_id)
 
         if state.next_node:
             send_socket_message(
@@ -171,7 +193,7 @@ def handle_leader(msg: dict):
     )
     state.in_election = False
 
-    logger.info("node=%s leader accepted leader_id=%s", state.node_id, state.leader_id)
+    logger.info("node=%s: leader accepted leader_id=%s", state.node_id, state.leader_id)
 
     if state.node_id != state.leader_id and state.next_node:
         send_socket_message(
@@ -188,12 +210,12 @@ def handle_get_var():
     state = global_state.state
 
     if not state.alive:
-        logger.info("node=%s GET_VAR rejected - node killed", state.node_id)
+        logger.info("node=%s: GET_VAR rejected - node killed", state.node_id)
         return {"error": "NODE_KILLED"}
 
     if state.leader_id != state.node_id:
         logger.info(
-            "node=%s GET_VAR redirected - not leader (current_leader=%s)",
+            "node=%s: GET_VAR redirected - not leader (current_leader=%s)",
             state.node_id,
             state.leader_id
         )
@@ -203,7 +225,7 @@ def handle_get_var():
         }
 
     logger.info(
-        "node=%s GET_VAR served locally value=%s",
+        "node=%s: GET_VAR served locally value=%s",
         state.node_id,
         state.shared_value
     )
@@ -218,12 +240,12 @@ def handle_set_var(msg):
     state = global_state.state
 
     if not state.alive:
-        logger.info("node=%s SET_VAR rejected - node killed", state.node_id)
+        logger.info("node=%s: SET_VAR rejected - node killed", state.node_id)
         return {"error": "NODE_KILLED"}
 
     if state.leader_id != state.node_id:
         logger.info(
-            "node=%s SET_VAR redirected - not leader (current_leader=%s)",
+            "node=%s: SET_VAR redirected - not leader (current_leader=%s)",
             state.node_id,
             state.leader_id
         )
@@ -235,7 +257,7 @@ def handle_set_var(msg):
     value = msg["value"]
     state.shared_value = value
 
-    logger.info("node=%s shared variable set to %s", state.node_id, value)
+    logger.info("node=%s: shared variable set to %s", state.node_id, value)
 
     return {
         "status": "OK",
