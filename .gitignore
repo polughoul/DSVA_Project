@@ -1,2 +1,2 @@
 # Local configuration overrides
-app/config.local.py
+app/config_local.py
