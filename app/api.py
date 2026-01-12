@@ -11,9 +11,6 @@ router = APIRouter()
 logger = setup_logger(NODE_ID)
 
 
-# =========================
-# Delay-aware send
-# =========================
 def send_with_delay(url, json=None, timeout=2):
     state = getattr(global_state, "state", None)
     if state and state.delay > 0:
@@ -119,9 +116,6 @@ def broadcast_leader(leader_id: int):
             break
 
 
-# =========================
-# Join / Leave
-# =========================
 @router.post("/join")
 def join(node_id: int = Body(...), host: str = Body(...), socket_port: int = Body(...)):
     state = global_state.state
@@ -220,9 +214,6 @@ def leave():
 
 
 
-# =========================
-# Health & lifecycle
-# =========================
 @router.get("/health")
 def health():
     state = global_state.state
@@ -274,9 +265,6 @@ def set_delay(delay: float = Body(..., embed=True)):
     return {"message": "Delay updated", "delay": delay}
 
 
-# =========================
-# Election (Chang–Roberts)
-# =========================
 @router.post("/startElection")
 def start_election():
     state = global_state.state
@@ -412,10 +400,6 @@ def _raise_with_election(status_code: int, base_detail: str, reason: str):
     failure_msg = failure_detail or "election could not be started"
     raise HTTPException(status_code=status_code, detail=f"{base_detail} - election failed: {failure_msg}")
 
-
-# =========================
-# Shared variable
-# =========================
 @router.get("/variable")
 def get_variable():
     state = global_state.state

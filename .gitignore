@@ -1,2 +1,7 @@
 # Local configuration overrides
 app/config_local.py
+
+# Log outputs
+logs/
+*.log
+

@@ -21,5 +21,5 @@ SOCKET_PORT = 9001
 LOG_AGGREGATOR_HOST = "192.168.56.103"
 LOG_AGGREGATOR_PORT = 9020
 
-# Volitelně lze nastavit zpoždění odesílání zpráv
+# Lze nastavit zpoždění odesílání zpráv
 MESSAGE_DELAY = 0.0

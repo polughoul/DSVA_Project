@@ -31,11 +31,9 @@ def _resolve_aggregator():
     port = _as_int(os.getenv("LOG_AGGREGATOR_PORT"), None)
 
     if host and port is None:
-        # Pokud je zadán pouze host bez portu, použijeme výchozí 9020
         port = 9020
 
     if host and port is None:
-        # Neplatná konfigurace: agregátor ignorujeme
         host = None
 
     return host, port
@@ -45,7 +43,7 @@ LOG_AGGREGATOR_HOST, LOG_AGGREGATOR_PORT = _resolve_aggregator()
 
 MESSAGE_DELAY = _as_float(os.getenv("MESSAGE_DELAY"), 0.0)
 
-try:  # Optional per-machine overrides without tracking them in Git
+try:  
     from app.config_local import *  # type: ignore # noqa
 except ImportError:
     pass
