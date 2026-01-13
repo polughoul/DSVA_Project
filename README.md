@@ -56,16 +56,7 @@ Ostatní uzly se k agregátoru připojí, pokud mají nastaveny `LOG_AGGREGATOR_
 3. V logu se objeví informace `Node starting...` a `socket_server listening...` s nastavenými porty.
 
 ## Demo scénář (`demo.sh`)
-Skript automatizuje scénář pro pět uzlů. Před spuštěním nastavte základní proměnné:
-
-```bash
-export NODE_COUNT=5
-export NODE_API_BASE_HOST=192.168.56.103
-export NODE_API_BASE_PORT=8000
-export NODE_SOCKET_BASE_PORT=9001
-```
-
-Pro heterogenní prostředí lze zadat konkrétní adresy:
+Skript automatizuje scénář pro pět uzlů. Pokud necháte výchozí lokální nastavení, není nutné nic exportovat. Pro více strojů můžete zadat konkrétní adresy přes proměnné prostředí:
 
 ```bash
 export NODE1_HOST=http://192.168.56.103:8000
