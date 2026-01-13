@@ -1,4 +1,4 @@
-# Distribuovaný Node Demo
+# Distribuovaný systém
 
 Distribuovaný systém simulující Chang–Roberts volby v kruhové topologii. Každý uzel kombinuje REST API (řídicí rovina) a TCP sockety (datová rovina) a sdílí logy přes centrální agregátor.
 
