@@ -96,44 +96,44 @@ log "=== Resetting delays to 0.0 ==="
 for idx in 1 2 3 4 5; do
     post_json "${NODE_URLS[$idx]}/setDelay" '{"delay": 0.0}'
 done
-sleep_then_log 1
+sleep_then_log 3
 
 log "=== Building initial ring (nodes 1-4) ==="
 post_json "${NODE_URLS[1]}/join" "$(join_payload 2)"
-sleep_then_log 1
+sleep_then_log 3
 post_json "${NODE_URLS[1]}/join" "$(join_payload 3)"
-sleep_then_log 1
+sleep_then_log 3
 post_json "${NODE_URLS[1]}/join" "$(join_payload 4)"
-sleep_then_log 1
+sleep_then_log 3
 
 log "=== Health snapshot for nodes 1 and 4 ==="
 health_check 1
 health_check 4
-sleep_then_log 1
+sleep_then_log 3
 
 log "=== Baseline election from node 3 (ring size 4) ==="
 post_empty "${NODE_URLS[3]}/startElection"
-sleep_then_log 5
+sleep_then_log 8
 
 log "=== Setting shared variable via node 1 ==="
 post_json "${NODE_URLS[1]}/variable" '{"value": 101}'
 get_call "${NODE_URLS[3]}/variable"
-sleep_then_log 2
+sleep_then_log 5
 
 log "=== Adding node 5 to ring via node 1 ==="
 post_json "${NODE_URLS[1]}/join" "$(join_payload 5)"
-sleep_then_log 1
+sleep_then_log 3
 
 log "=== Health snapshot after node 5 join (nodes 1,5) ==="
 health_check 1
 health_check 5
-sleep_then_log 1
+sleep_then_log 3
 
 log "=== Enabling 2.5s delay on nodes 1-3 ==="
 for idx in 1 2 3; do
     post_json "${NODE_URLS[$idx]}/setDelay" '{"delay": 2.5}'
 done
-sleep_then_log 1
+sleep_then_log 3
 
 log "=== Starting simultaneous elections (nodes 1-3) after node 5 join ==="
 post_empty "${NODE_URLS[1]}/startElection"
@@ -141,75 +141,75 @@ sleep 0.5
 post_empty "${NODE_URLS[2]}/startElection"
 sleep 0.5
 post_empty "${NODE_URLS[3]}/startElection"
-sleep_then_log 8
+sleep_then_log 10
 
 log "=== Resetting delays to 0.0 ==="
 for idx in 1 2 3 4 5; do
     post_json "${NODE_URLS[$idx]}/setDelay" '{"delay": 0.0}'
 done
-sleep_then_log 2
+sleep_then_log 5
 
 log "=== Killing current leader (node 5) ==="
 post_empty "${NODE_URLS[5]}/kill"
-sleep_then_log 2
+sleep_then_log 5
 
 log "=== Health check for killed node 5 ==="
 health_check 5
-sleep_then_log 1
+sleep_then_log 3
 
 log "=== Requesting variable from node 3 (should trigger election) ==="
 get_call "${NODE_URLS[3]}/variable"
-sleep_then_log 5
+sleep_then_log 8
 
 log "=== Requesting variable from killed leader (node 5) ==="
 get_call "${NODE_URLS[5]}/variable"
-sleep_then_log 2
+sleep_then_log 5
 
 log "=== Reviving node 5 ==="
 post_empty "${NODE_URLS[5]}/revive"
-sleep_then_log 3
+sleep_then_log 6
 
 log "=== Health check after node 5 revival ==="
 health_check 5
-sleep_then_log 1
+sleep_then_log 3
 
 log "=== Sequential removals down to a single node ==="
 for idx in 5 4 3 2; do
     log "--- Removing node ${idx} from ring ---"
     post_empty "${NODE_URLS[$idx]}/leave"
-    sleep_then_log 2
+    sleep_then_log 5
     health_check 1
     health_check "${idx}"
     if (( idx > 2 )); then
         post_empty "${NODE_URLS[1]}/startElection"
-        sleep_then_log 3
+        sleep_then_log 6
     fi
     get_call "${NODE_URLS[1]}/variable"
-    sleep_then_log 2
+    sleep_then_log 5
 done
 
 log "=== Sequential additions back to five nodes ==="
 for idx in 2 3 4 5; do
     log "--- Rejoining node ${idx} via node 1 ---"
     post_json "${NODE_URLS[1]}/join" "$(join_payload ${idx})"
-    sleep_then_log 2
+    sleep_then_log 5
     health_check 1
     health_check "${idx}"
     post_empty "${NODE_URLS[1]}/startElection"
-    sleep_then_log 3
+    sleep_then_log 6
     get_call "${NODE_URLS[$idx]}/variable"
-    sleep_then_log 2
+    sleep_then_log 5
 done
 
 log "=== Updating shared variable to 303 via node 1 ==="
 post_json "${NODE_URLS[1]}/variable" '{"value": 303}'
 get_call "${NODE_URLS[5]}/variable"
-sleep_then_log 2
+sleep_then_log 5
 
 log "=== Final delay reset ==="
 for idx in 1 2 3 4 5; do
     post_json "${NODE_URLS[$idx]}/setDelay" '{"delay": 0.0}'
 done
-sleep_then_log 1
+sleep_then_log 3
 
 log "=== Demo complete ==="
