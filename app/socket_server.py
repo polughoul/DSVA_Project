@@ -17,7 +17,7 @@ logger = setup_logger("socket-server")
 def _effective_timeout(base: float) -> float:
     state = getattr(global_state, "state", None)
     delay = state.delay if state else 0.0
-    return base + max(delay * 2, 1.0)
+    return base + max(delay * 3, 2.0)
 
 
 def _post_with_delay(url: str, payload: dict, timeout: float) -> requests.Response:
@@ -319,7 +319,12 @@ def _forward_election(candidate_id: int, allow_repair: bool = True):
 
     if isinstance(response, dict) and response.get("error") == "SOCKET_COMM_ERROR":
         failed_id = state.next_node.node_id if state.next_node else None
-        logger.warning("node=%s: election forward error", state.node_id)
+        logger.warning(
+            "node=%s: election forward error target=%s error=%s",
+            state.node_id,
+            failed_id,
+            response.get("details")
+        )
 
         if allow_repair and failed_id is not None and _repair_topology(failed_id):
             logger.info("node=%s: restarting election after topology repair", state.node_id)
@@ -365,7 +370,12 @@ def handle_election(msg: dict):
         )
 
         if isinstance(response, dict) and response.get("error") == "SOCKET_COMM_ERROR":
-            logger.warning("node=%s: leader broadcast failed", state.node_id)
+            logger.warning(
+                "node=%s: leader broadcast failed target=%s error=%s",
+                state.node_id,
+                state.next_node.node_id if state.next_node else None,
+                response.get("details")
+            )
 
         return {"status": "LEADER"}
 

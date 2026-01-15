@@ -11,7 +11,7 @@ def send_socket_message(host: str, port: int, message: dict, timeout=3):
     delay = state.delay if state else 0.0
     if delay > 0:
         time.sleep(delay)
-    effective_timeout = timeout + max(delay * 4, 1.0)
+    effective_timeout = timeout + max(delay * 6, 3.0)
 
     try:
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:

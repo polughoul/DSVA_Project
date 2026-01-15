@@ -19,7 +19,7 @@ def send_with_delay(url, json=None, timeout=2):
     delay = state.delay if state else 0.0
     if delay > 0:
         time.sleep(delay)
-    effective_timeout = timeout + max(delay * 2, 1.0)
+    effective_timeout = timeout + max(delay * 3, 2.0)
     return requests.post(url, json=json, timeout=effective_timeout)
 
 
@@ -28,7 +28,7 @@ def get_with_delay(url, timeout=2):
     delay = state.delay if state else 0.0
     if delay > 0:
         time.sleep(delay)
-    effective_timeout = timeout + max(delay * 2, 1.0)
+    effective_timeout = timeout + max(delay * 3, 2.0)
     return requests.get(url, timeout=effective_timeout)
 
 
