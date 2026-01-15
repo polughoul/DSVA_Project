@@ -142,7 +142,8 @@ def _fetch_next_of(node: NodeInfo | None) -> NodeInfo | None:
 def update_neighbors(payload: dict = Body(...)):
     state = global_state.state
 
-    if any(key.startswith("prev_") for key in payload.keys()) or "prev_id" in payload:
+    prev_fields = {"prev_id", "prev_host", "prev_socket_port"}
+    if any(key in payload for key in prev_fields):
         prev_id = payload.get("prev_id")
 
         if prev_id is None:
@@ -156,7 +157,8 @@ def update_neighbors(payload: dict = Body(...)):
             if prev_info:
                 state.set_prev(prev_info)
 
-    if any(key.startswith("next_") for key in payload.keys()) or "next_id" in payload:
+    next_fields = {"next_id", "next_host", "next_socket_port"}
+    if any(key in payload for key in next_fields):
         next_id = payload.get("next_id")
 
         if next_id is None:
@@ -171,7 +173,8 @@ def update_neighbors(payload: dict = Body(...)):
             if next_info:
                 state.set_next(next_info)
 
-    if any(key.startswith("next_next_") for key in payload.keys()) or "next_next_id" in payload:
+    next_next_fields = {"next_next_id", "next_next_host", "next_next_socket_port"}
+    if any(key in payload for key in next_next_fields):
         next_next_id = payload.get("next_next_id")
 
         if next_next_id is None:
