@@ -1,9 +1,14 @@
 import socket
 import json
 import threading
+
+import requests
+
 import app.state as global_state
 from app.logger import setup_logger
+from app.node_registry import NODE_REGISTRY
 from app.socket_client import send_socket_message
+from app.state import NodeInfo
 
 logger = setup_logger("socket-server")
 
@@ -104,13 +109,125 @@ def handle_message(msg: dict):
     return {"error": "Unknown message type"}
 
 
+def _registry_node_info(node_id: int) -> NodeInfo | None:
+    entry = NODE_REGISTRY.get(node_id)
+    if not entry:
+        return None
 
-def _forward_election(candidate_id: int):
+    host = entry.get("host")
+    socket_port = entry.get("socket_port")
+
+    if not host:
+        return None
+
+    try:
+        port_value = int(socket_port) if socket_port is not None else 9000 + node_id
+    except (TypeError, ValueError):
+        port_value = 9000 + node_id
+
+    return NodeInfo(node_id, host, port_value)
+
+
+def _iter_successor_candidates(exclude: set[int]) -> list[NodeInfo]:
+    state = global_state.state
+    ids = sorted(NODE_REGISTRY.keys())
+
+    if state.node_id in ids:
+        start_index = ids.index(state.node_id) + 1
+        ordered_ids = ids[start_index:] + ids[:start_index]
+    else:
+        ordered_ids = ids
+
+    candidates: list[NodeInfo] = []
+    for candidate_id in ordered_ids:
+        if candidate_id in exclude:
+            continue
+
+        node_info = _registry_node_info(candidate_id)
+        if node_info:
+            candidates.append(node_info)
+
+    return candidates
+
+
+def _probe_alive(host: str, timeout: float = 2.0) -> bool:
+    try:
+        response = requests.get(f"{host}/health", timeout=timeout)
+        data = response.json()
+        return data.get("status") == "alive"
+    except (requests.RequestException, ValueError):
+        return False
+
+
+def _find_replacement_successor(exclude: set[int]) -> NodeInfo | None:
+    for candidate in _iter_successor_candidates(exclude):
+        if _probe_alive(candidate.host):
+            return candidate
+    return None
+
+
+def _repair_topology(missing_id: int | None) -> bool:
+    state = global_state.state
+
+    if not state.next_node:
+        return False
+
+    exclude = {state.node_id}
+    if missing_id is not None:
+        exclude.add(missing_id)
+
+    replacement = _find_replacement_successor(exclude)
+
+    if not replacement:
+        logger.warning(
+            "node=%s: topology repair failed - no alive successor found",
+            state.node_id
+        )
+        state.next_node = None
+        return False
+
+    state.next_node = replacement
+
+    try:
+        requests.post(
+            f"{replacement.host}/update_neighbors",
+            json={
+                "prev_id": state.node_id,
+                "prev_host": state.self_host,
+                "prev_socket_port": state.socket_port,
+            },
+            timeout=2
+        )
+    except requests.RequestException as exc:
+        logger.warning(
+            "node=%s: failed to update new successor prev pointer (%s)",
+            state.node_id,
+            exc
+        )
+        return False
+
+    logger.info(
+        "node=%s: topology repaired - new successor %s",
+        state.node_id,
+        replacement.node_id
+    )
+
+    return True
+
+
+def _forward_election(candidate_id: int, allow_repair: bool = True):
     state = global_state.state
 
     if not state.next_node:
         logger.warning("node=%s: no next node to forward election message", state.node_id)
         return {"error": "NO_NEXT_NODE"}
+
+    if state.next_node.node_id == state.node_id:
+        state.leader_id = state.node_id
+        state.leader_node = state.self_info()
+        state.in_election = False
+        logger.info("node=%s: single-node ring - became leader", state.node_id)
+        return {"status": "LEADER"}
 
     ip, port = state.next_node.socket_addr()
 
@@ -124,7 +241,13 @@ def _forward_election(candidate_id: int):
     )
 
     if isinstance(response, dict) and response.get("error") == "SOCKET_COMM_ERROR":
+        failed_id = state.next_node.node_id if state.next_node else None
         logger.warning("node=%s: election forward error", state.node_id)
+
+        if allow_repair and failed_id is not None and _repair_topology(failed_id):
+            logger.info("node=%s: restarting election after topology repair", state.node_id)
+            return _forward_election(candidate_id, allow_repair=False)
+
         return {"error": "SOCKET_COMM_ERROR"}
 
     return {"status": "FORWARDED"}
