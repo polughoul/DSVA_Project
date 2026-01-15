@@ -221,9 +221,16 @@ def _repair_topology(missing_id: int | None) -> bool:
 
     replacement: NodeInfo | None = None
 
-    if state.next_next_node and state.next_next_node.node_id not in exclude:
-        if _probe_alive(state.next_next_node.host):
-            replacement = state.next_next_node
+    preferred = state.next_next_node
+    if preferred and preferred.node_id not in exclude:
+        if state.prev_node and preferred.node_id == state.prev_node.node_id:
+            alternate = _find_replacement_successor(exclude | {preferred.node_id})
+            if alternate:
+                replacement = alternate
+            elif _probe_alive(preferred.host):
+                replacement = preferred
+        elif _probe_alive(preferred.host):
+            replacement = preferred
 
     if not replacement:
         replacement = _find_replacement_successor(exclude)
