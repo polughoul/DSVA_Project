@@ -1,6 +1,7 @@
 import socket
 import json
 import threading
+import time
 
 import requests
 
@@ -11,6 +12,28 @@ from app.socket_client import send_socket_message
 from app.state import NodeInfo
 
 logger = setup_logger("socket-server")
+
+
+def _effective_timeout(base: float) -> float:
+    state = getattr(global_state, "state", None)
+    delay = state.delay if state else 0.0
+    return base + max(delay * 2, 1.0)
+
+
+def _post_with_delay(url: str, payload: dict, timeout: float) -> requests.Response:
+    state = getattr(global_state, "state", None)
+    delay = state.delay if state else 0.0
+    if delay > 0:
+        time.sleep(delay)
+    return requests.post(url, json=payload, timeout=_effective_timeout(timeout))
+
+
+def _get_with_delay(url: str, timeout: float) -> requests.Response:
+    state = getattr(global_state, "state", None)
+    delay = state.delay if state else 0.0
+    if delay > 0:
+        time.sleep(delay)
+    return requests.get(url, timeout=_effective_timeout(timeout))
 
 
 def describe_message(msg: dict) -> str:
@@ -152,7 +175,7 @@ def _iter_successor_candidates(exclude: set[int]) -> list[NodeInfo]:
 
 def _probe_alive(host: str, timeout: float = 2.0) -> bool:
     try:
-        response = requests.get(f"{host}/health", timeout=timeout)
+        response = _get_with_delay(f"{host}/health", timeout)
         data = response.json()
         return data.get("status") == "alive"
     except (requests.RequestException, ValueError):
@@ -171,7 +194,7 @@ def _fetch_next_of(node: NodeInfo | None) -> NodeInfo | None:
         return None
 
     try:
-        response = requests.get(f"{node.host}/health", timeout=2)
+        response = _get_with_delay(f"{node.host}/health", 2)
         data = response.json()
         next_info = data.get("next")
         if not next_info:
@@ -218,14 +241,14 @@ def _repair_topology(missing_id: int | None) -> bool:
     state.set_next_next(_fetch_next_of(replacement) or state.self_info())
 
     try:
-        requests.post(
+        _post_with_delay(
             f"{replacement.host}/update_neighbors",
-            json={
+            {
                 "prev_id": state.node_id,
                 "prev_host": state.self_host,
                 "prev_socket_port": state.socket_port,
             },
-            timeout=2
+            2
         )
     except requests.RequestException as exc:
         logger.warning(
@@ -237,14 +260,14 @@ def _repair_topology(missing_id: int | None) -> bool:
 
     if state.prev_node:
         try:
-            requests.post(
+            _post_with_delay(
                 f"{state.prev_node.host}/update_neighbors",
-                json={
+                {
                     "next_next_id": replacement.node_id,
                     "next_next_host": replacement.host,
                     "next_next_socket_port": replacement.socket_port,
                 },
-                timeout=2
+                2
             )
         except requests.RequestException as exc:
             logger.warning(

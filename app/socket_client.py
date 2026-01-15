@@ -8,12 +8,14 @@ def send_socket_message(host: str, port: int, message: dict, timeout=3):
     data = json.dumps(message).encode()
 
     state = getattr(global_state, "state", None)
-    if state and state.delay > 0:
-        time.sleep(state.delay)
+    delay = state.delay if state else 0.0
+    if delay > 0:
+        time.sleep(delay)
+    effective_timeout = timeout + max(delay * 4, 1.0)
 
     try:
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            s.settimeout(timeout)
+            s.settimeout(effective_timeout)
             s.connect((host, port))
             s.sendall(data)
 

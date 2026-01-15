@@ -16,16 +16,20 @@ _UNSET = object()
 
 def send_with_delay(url, json=None, timeout=2):
     state = getattr(global_state, "state", None)
-    if state and state.delay > 0:
-        time.sleep(state.delay)
-    return requests.post(url, json=json, timeout=timeout)
+    delay = state.delay if state else 0.0
+    if delay > 0:
+        time.sleep(delay)
+    effective_timeout = timeout + max(delay * 2, 1.0)
+    return requests.post(url, json=json, timeout=effective_timeout)
 
 
 def get_with_delay(url, timeout=2):
     state = getattr(global_state, "state", None)
-    if state and state.delay > 0:
-        time.sleep(state.delay)
-    return requests.get(url, timeout=timeout)
+    delay = state.delay if state else 0.0
+    if delay > 0:
+        time.sleep(delay)
+    effective_timeout = timeout + max(delay * 2, 1.0)
+    return requests.get(url, timeout=effective_timeout)
 
 
 def _serialize_neighbor(prefix: str, node: NodeInfo | None) -> dict:
