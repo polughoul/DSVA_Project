@@ -166,6 +166,26 @@ def _find_replacement_successor(exclude: set[int]) -> NodeInfo | None:
     return None
 
 
+def _fetch_next_of(node: NodeInfo | None) -> NodeInfo | None:
+    if not node:
+        return None
+
+    try:
+        response = requests.get(f"{node.host}/health", timeout=2)
+        data = response.json()
+        next_info = data.get("next")
+        if not next_info:
+            return None
+
+        return NodeInfo(
+            next_info["node_id"],
+            next_info["host"],
+            next_info.get("socket_port", node.socket_port)
+        )
+    except (requests.RequestException, ValueError, KeyError):
+        return None
+
+
 def _repair_topology(missing_id: int | None) -> bool:
     state = global_state.state
 
@@ -176,17 +196,26 @@ def _repair_topology(missing_id: int | None) -> bool:
     if missing_id is not None:
         exclude.add(missing_id)
 
-    replacement = _find_replacement_successor(exclude)
+    replacement: NodeInfo | None = None
+
+    if state.next_next_node and state.next_next_node.node_id not in exclude:
+        if _probe_alive(state.next_next_node.host):
+            replacement = state.next_next_node
+
+    if not replacement:
+        replacement = _find_replacement_successor(exclude)
 
     if not replacement:
         logger.warning(
             "node=%s: topology repair failed - no alive successor found",
             state.node_id
         )
-        state.next_node = None
+        state.set_next(None)
+        state.set_next_next(None)
         return False
 
-    state.next_node = replacement
+    state.set_next(replacement)
+    state.set_next_next(_fetch_next_of(replacement) or state.self_info())
 
     try:
         requests.post(
@@ -205,6 +234,24 @@ def _repair_topology(missing_id: int | None) -> bool:
             exc
         )
         return False
+
+    if state.prev_node:
+        try:
+            requests.post(
+                f"{state.prev_node.host}/update_neighbors",
+                json={
+                    "next_next_id": replacement.node_id,
+                    "next_next_host": replacement.host,
+                    "next_next_socket_port": replacement.socket_port,
+                },
+                timeout=2
+            )
+        except requests.RequestException as exc:
+            logger.warning(
+                "node=%s: failed to inform predecessor about repaired successor (%s)",
+                state.node_id,
+                exc
+            )
 
     logger.info(
         "node=%s: topology repaired - new successor %s",

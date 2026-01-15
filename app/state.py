@@ -23,6 +23,7 @@ class NodeState:
 
         self.next_node: NodeInfo | None = None
         self.prev_node: NodeInfo | None = None
+        self.next_next_node: NodeInfo | None = None
 
         self.leader_id: int | None = None
         self.leader_node: NodeInfo | None = None
@@ -38,6 +39,24 @@ class NodeState:
 
     def self_info(self) -> NodeInfo:
         return NodeInfo(self.node_id, self.self_host, self.socket_port)
+
+    def set_prev(self, node: NodeInfo | None):
+        self.prev_node = node
+
+    def set_next(self, node: NodeInfo | None):
+        self.next_node = node
+
+    def set_next_next(self, node: NodeInfo | None):
+        self.next_next_node = node
+
+    def neighbors_snapshot(self) -> dict:
+        return {
+            "self": self.self_info().to_dict(),
+            "prev": self.prev_node.to_dict() if self.prev_node else None,
+            "next": self.next_node.to_dict() if self.next_node else None,
+            "next_next": self.next_next_node.to_dict() if self.next_next_node else None,
+            "leader": self.leader_node.to_dict() if self.leader_node else None,
+        }
 
 state: NodeState | None = None
 

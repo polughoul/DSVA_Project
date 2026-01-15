@@ -11,6 +11,9 @@ router = APIRouter()
 logger = setup_logger(NODE_ID)
 
 
+_UNSET = object()
+
+
 def send_with_delay(url, json=None, timeout=2):
     state = getattr(global_state, "state", None)
     if state and state.delay > 0:
@@ -18,34 +21,177 @@ def send_with_delay(url, json=None, timeout=2):
     return requests.post(url, json=json, timeout=timeout)
 
 
+def get_with_delay(url, timeout=2):
+    state = getattr(global_state, "state", None)
+    if state and state.delay > 0:
+        time.sleep(state.delay)
+    return requests.get(url, timeout=timeout)
+
+
+def _serialize_neighbor(prefix: str, node: NodeInfo | None) -> dict:
+    if node is None:
+        return {
+            f"{prefix}_id": None,
+            f"{prefix}_host": None,
+            f"{prefix}_socket_port": None,
+        }
+
+    return {
+        f"{prefix}_id": node.node_id,
+        f"{prefix}_host": node.host,
+        f"{prefix}_socket_port": node.socket_port,
+    }
+
+
+def _send_neighbor_update(
+    target: NodeInfo,
+    *,
+    prev=_UNSET,
+    next=_UNSET,
+    next_next=_UNSET,
+    timeout: int = 2
+):
+    payload: dict = {}
+
+    if prev is not _UNSET:
+        payload.update(_serialize_neighbor("prev", prev))
+
+    if next is not _UNSET:
+        payload.update(_serialize_neighbor("next", next))
+
+    if next_next is not _UNSET:
+        payload.update(_serialize_neighbor("next_next", next_next))
+
+    if not payload:
+        return
+
+    send_with_delay(
+        f"{target.host}/update_neighbors",
+        json=payload,
+        timeout=timeout
+    )
+
+
+def _node_info_from_parts(
+    node_id: int | None,
+    host: str | None,
+    socket_port: int | None
+) -> NodeInfo | None:
+    if node_id is None:
+        return None
+
+    if host is None or socket_port is None:
+        return None
+
+    try:
+        port_value = int(socket_port)
+    except (TypeError, ValueError):
+        return None
+
+    return NodeInfo(int(node_id), host, port_value)
+
+
+def _node_info_from_dict(data: dict | None) -> NodeInfo | None:
+    if not data:
+        return None
+
+    node_id = data.get("node_id")
+    host = data.get("host")
+    socket_port = data.get("socket_port")
+
+    return _node_info_from_parts(node_id, host, socket_port)
+
+
+def _refresh_next_successors():
+    state = global_state.state
+
+    if not state.next_node:
+        state.set_next_next(None)
+        return
+
+    try:
+        response = get_with_delay(f"{state.next_node.host}/health", timeout=2)
+        data = response.json()
+        candidate = _node_info_from_dict(data.get("next"))
+
+        if candidate:
+            state.set_next_next(candidate)
+        else:
+            state.set_next_next(state.self_info())
+    except requests.exceptions.RequestException:
+        state.set_next_next(None)
+    except ValueError:
+        state.set_next_next(None)
+
+
+def _fetch_next_of(node: NodeInfo | None) -> NodeInfo | None:
+    if not node:
+        return None
+
+    try:
+        response = get_with_delay(f"{node.host}/health", timeout=2)
+        data = response.json()
+        return _node_info_from_dict(data.get("next"))
+    except requests.exceptions.RequestException:
+        return None
+    except ValueError:
+        return None
+
+
 @router.post("/update_neighbors")
 def update_neighbors(payload: dict = Body(...)):
     state = global_state.state
 
-    if "prev_id" in payload:
+    if any(key.startswith("prev_") for key in payload.keys()) or "prev_id" in payload:
         prev_id = payload.get("prev_id")
-        prev_host = payload.get("prev_host")
-        prev_socket_port = payload.get("prev_socket_port")
 
         if prev_id is None:
-            state.prev_node = None
-        elif prev_host and prev_socket_port is not None:
-            state.prev_node = NodeInfo(prev_id, prev_host, prev_socket_port)
+            state.set_prev(None)
+        else:
+            prev_info = _node_info_from_parts(
+                prev_id,
+                payload.get("prev_host"),
+                payload.get("prev_socket_port")
+            )
+            if prev_info:
+                state.set_prev(prev_info)
 
-    if "next_id" in payload:
+    if any(key.startswith("next_") for key in payload.keys()) or "next_id" in payload:
         next_id = payload.get("next_id")
-        next_host = payload.get("next_host")
-        next_socket_port = payload.get("next_socket_port")
 
         if next_id is None:
-            state.next_node = None
-        elif next_host and next_socket_port is not None:
-            state.next_node = NodeInfo(next_id, next_host, next_socket_port)
+            state.set_next(None)
+            state.set_next_next(None)
+        else:
+            next_info = _node_info_from_parts(
+                next_id,
+                payload.get("next_host"),
+                payload.get("next_socket_port")
+            )
+            if next_info:
+                state.set_next(next_info)
+
+    if any(key.startswith("next_next_") for key in payload.keys()) or "next_next_id" in payload:
+        next_next_id = payload.get("next_next_id")
+
+        if next_next_id is None:
+            state.set_next_next(None)
+        else:
+            nnext_info = _node_info_from_parts(
+                next_next_id,
+                payload.get("next_next_host"),
+                payload.get("next_next_socket_port")
+            )
+            if nnext_info:
+                state.set_next_next(nnext_info)
+
+    _refresh_next_successors()
 
     logger.info(
-        "Neighbors updated: prev=%s, next=%s",
+        "Neighbors updated: prev=%s, next=%s, next_next=%s",
         state.prev_node.node_id if state.prev_node else None,
         state.next_node.node_id if state.next_node else None,
+        state.next_next_node.node_id if state.next_next_node else None,
     )
 
     return {"message": "Neighbors updated"}
@@ -130,48 +276,46 @@ def join(node_id: int = Body(...), host: str = Body(...), socket_port: int = Bod
     new_node = NodeInfo(node_id, host, socket_port)
 
     if state.next_node is None:
-        state.next_node = new_node
-        state.prev_node = new_node
+        state.set_next(new_node)
+        state.set_prev(new_node)
+        state.set_next_next(state.self_info())
 
-        send_with_delay(
-            f"{host}/update_neighbors",
-            json={
-                "prev_id": state.node_id,
-                "prev_host": state.self_host,
-                "prev_socket_port": state.socket_port,
-
-                "next_id": state.node_id,
-                "next_host": state.self_host,
-                "next_socket_port": state.socket_port,
-            }
+        _send_neighbor_update(
+            new_node,
+            prev=state.self_info(),
+            next=state.self_info(),
+            next_next=state.self_info()
         )
+
+        _refresh_next_successors()
 
         return {"message": "Joined as second node"}
 
     old_next = state.next_node
-    state.next_node = new_node
+    state.set_next(new_node)
+    state.set_next_next(old_next)
 
-    send_with_delay(
-        f"{host}/update_neighbors",
-        json={
-            "prev_id": state.node_id,
-            "prev_host": state.self_host,
-            "prev_socket_port": state.socket_port,
+    old_next_next = _fetch_next_of(old_next) or state.self_info()
 
-            "next_id": old_next.node_id,
-            "next_host": old_next.host,
-            "next_socket_port": old_next.socket_port,
-        }
+    _send_neighbor_update(
+        new_node,
+        prev=state.self_info(),
+        next=old_next,
+        next_next=old_next_next
     )
 
-    send_with_delay(
-        f"{old_next.host}/update_neighbors",
-        json={
-            "prev_id": node_id,
-            "prev_host": host,
-            "prev_socket_port": socket_port,
-        }
+    _send_neighbor_update(
+        old_next,
+        prev=new_node
     )
+
+    if state.prev_node and state.prev_node.node_id != state.node_id:
+        _send_neighbor_update(
+            state.prev_node,
+            next_next=new_node
+        )
+
+    _refresh_next_successors()
 
     return {"message": "Node joined"}
 
@@ -183,29 +327,22 @@ def leave():
 
     try:
         if state.prev_node and state.next_node:
-            send_with_delay(
-                f"{state.prev_node.host}/update_neighbors",
-                json={
-                    "next_id": state.next_node.node_id,
-                    "next_host": state.next_node.host,
-                    "next_socket_port": state.next_node.socket_port,
-                }
+            _send_neighbor_update(
+                state.prev_node,
+                next=state.next_node
             )
 
-            send_with_delay(
-                f"{state.next_node.host}/update_neighbors",
-                json={
-                    "prev_id": state.prev_node.node_id,
-                    "prev_host": state.prev_node.host,
-                    "prev_socket_port": state.prev_node.socket_port,
-                }
+            _send_neighbor_update(
+                state.next_node,
+                prev=state.prev_node
             )
 
     except Exception as e:
         logger.warning(f"Leave propagation failed: {e}")
 
-    state.next_node = None
-    state.prev_node = None
+    state.set_next(None)
+    state.set_prev(None)
+    state.set_next_next(None)
     state.leader_id = None
     state.in_election = False
     state.leader_node = None
@@ -218,11 +355,12 @@ def leave():
 def health():
     state = global_state.state
     logger.info(
-        "Health snapshot: status=%s leader=%s prev=%s next=%s",
+        "Health snapshot: status=%s leader=%s prev=%s next=%s next_next=%s",
         "alive" if state.alive else "killed",
         state.leader_id,
         state.prev_node.node_id if state.prev_node else None,
         state.next_node.node_id if state.next_node else None,
+        state.next_next_node.node_id if state.next_next_node else None,
     )
     return {
         "status": "alive" if state.alive else "killed",
@@ -231,7 +369,8 @@ def health():
         "is_leader": state.leader_id == state.node_id,
         "delay": state.delay,
         "next": state.next_node.to_dict() if state.next_node else None,
-        "prev": state.prev_node.to_dict() if state.prev_node else None
+        "prev": state.prev_node.to_dict() if state.prev_node else None,
+        "next_next": state.next_next_node.to_dict() if state.next_next_node else None,
     }
 
 
